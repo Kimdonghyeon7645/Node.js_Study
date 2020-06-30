@@ -12,8 +12,8 @@ MongoClient.connect('mongodb://localhost:27017/', {useUnifiedTopology:true}, fun
     if(err) return console.log(err)
     db = client.db('schedule')
     // db.collection('todo').insertOne({할일: 'Nodejs 공부하기',  날짜: '5월 19일'})
-    app.listen(5000, function(){
-        console.log('listen on 5000')
+    app.listen(8000, function(){
+        console.log('listen on 8000')
     })
 })
 
@@ -26,11 +26,11 @@ app.use(methodOverride('_method'))
 
 app.get('/', function(req, res){
 //    res.send("Node.js 에 온걸 환영합니다!")
-    res.sendFile(__dirname + '/index.html')
+    res.render('index.ejs')
 })
 
 app.get('/write', function(req, res){
-    res.sendFile(__dirname + '/writing.html')
+    res.render('writing.ejs')
 })
 
 app.get('/edit/:id', function(req, res){
@@ -57,7 +57,7 @@ app.post('/add', function(req, res){
             console.log(result)
         })
     })
-    res.send('전송완료!')
+    res.redirect('/list')
     console.log(req.body)
     console.log(req.body.todo)
     console.log(req.body.date)
@@ -69,11 +69,12 @@ app.delete('/delete', function(req, res){
     db.collection('todo').deleteOne({_id : req.body._id}, function(){
         console.log('삭제 끄읏')
     })
-    res.send('삭제완료')
+    res.send('삭제 완료')
+    res.redirect('/list')
 })
 
 app.put('/edit/:id', function(req, res){
     db.collection('todo').updateOne({_id: parseInt(req.params.id)}, {$set: {할일: req.body.todo, 날짜: req.body.date}}, function(err, result){
-        res.send('수정완료')
+        res.redirect('/list')
     })
 })
